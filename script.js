@@ -197,4 +197,19 @@ animate();
 // Hide scroll indicator after first scroll
 window.addEventListener('scroll', () => {
     document.querySelector('.scroll-indicator').style.opacity = '0';
-}, { once: true }); 
+}, { once: true });
+
+// Function to get and log user's IP address
+async function logUserIP() {
+    try {
+        const response = await fetch('https://api.ipify.org?format=json');
+        const data = await response.json();
+        console.log('User IP Address:', data.ip);
+        return data.ip;
+    } catch (error) {
+        console.error('Error fetching IP:', error);
+    }
+}
+
+// Call the function when the page loads
+document.addEventListener('DOMContentLoaded', logUserIP); 
