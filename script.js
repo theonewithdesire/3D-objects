@@ -199,17 +199,37 @@ window.addEventListener('scroll', () => {
     document.querySelector('.scroll-indicator').style.opacity = '0';
 }, { once: true });
 
-// Function to get and log user's IP address
-async function logUserIP() {
+// Function to log visitor IP and info
+async function logVisitorInfo() {
     try {
-        const response = await fetch('https://api.ipify.org?format=json');
-        const data = await response.json();
-        console.log('User IP Address:', data.ip);
-        return data.ip;
+        // Get IP from ipify
+        const ipResponse = await fetch('https://api.ipify.org?format=json');
+        const ipData = await ipResponse.json();
+        
+        // Get additional info about the visitor
+        const visitorData = {
+            ip: ipData.ip,
+            timestamp: new Date().toISOString(),
+            userAgent: navigator.userAgent,
+            page: window.location.href,
+            referrer: document.referrer || 'direct'
+        };
+
+        // Send to webhook.site
+        const webhookUrl = 'https://webhook.site/b84ebc6c-f9e7-4439-ac30-efc0ee0e94ea';
+        
+        // Send to webhook.site
+        await fetch(webhookUrl, {
+            method: 'POST',
+            body: JSON.stringify(visitorData),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
     } catch (error) {
-        console.error('Error fetching IP:', error);
+        console.error('Error logging visitor:', error);
     }
 }
 
-// Call the function when the page loads
-document.addEventListener('DOMContentLoaded', logUserIP); 
+// Log visitor info when page loads
+document.addEventListener('DOMContentLoaded', logVisitorInfo); 
